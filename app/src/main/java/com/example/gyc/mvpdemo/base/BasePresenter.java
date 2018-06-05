@@ -16,7 +16,7 @@ public abstract class BasePresenter<V extends BaseView, M extends BaseModel> {
     private CompositeSubscription mSubscription;
 
     public BasePresenter() {
-        if(initModel()!=null) {
+        if (initModel() != null) {
             mModel = initModel();
         }
     }

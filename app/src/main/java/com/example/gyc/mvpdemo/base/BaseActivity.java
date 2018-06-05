@@ -8,7 +8,7 @@ import android.support.v7.app.AppCompatActivity;
  * Created by gaoyucong on 2018-06-04.
  */
 
-public abstract class BaseActivity<V extends BaseView, M extends BaseModel, P extends BasePresenter> extends AppCompatActivity {
+public abstract class BaseActivity<M extends BaseModel, V extends BaseView, P extends BasePresenter> extends AppCompatActivity {
     protected P mPresenter;
 
     @Override
