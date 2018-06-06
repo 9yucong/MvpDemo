@@ -19,7 +19,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
  */
 
 public class ApiManager {
-    private static final String BASE_URL = "https://github.com";
+    private static final String BASE_URL = "http://cwbeta.risinfo.cn/wp-json/";
     private static ApiManager instance;
 
     private ApiManager(Context context) {

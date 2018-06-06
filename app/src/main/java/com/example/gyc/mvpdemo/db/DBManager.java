@@ -19,7 +19,7 @@ public class DBManager {
 
     private DBManager(Context context) {
         mContext = context;
-        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(mContext, DB_NAME);
+        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(context, DB_NAME);
         mDaoMaster = new DaoMaster(helper.getWritableDb());
         mDaoSession = mDaoMaster.newSession();
     }

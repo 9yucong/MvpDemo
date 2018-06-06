@@ -1,5 +1,6 @@
 package com.example.gyc.mvpdemo.mvp.model;
 
+
 import com.example.gyc.mvpdemo.mvp.contract.MainContract;
 
 /**
@@ -7,4 +8,5 @@ import com.example.gyc.mvpdemo.mvp.contract.MainContract;
  */
 
 public class MainModel implements MainContract.Model {
+
 }

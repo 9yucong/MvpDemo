@@ -1,10 +1,12 @@
 package com.example.gyc.mvpdemo.base;
 
+
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 
-import rx.Subscription;
-import rx.subscriptions.CompositeSubscription;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+
 
 /**
  * Created by gaoyucong on 2018-06-04.
@@ -13,7 +15,7 @@ import rx.subscriptions.CompositeSubscription;
 public abstract class BasePresenter<V extends BaseView, M extends BaseModel> {
     private Reference<V> mViewRef;
     private M mModel;
-    private CompositeSubscription mSubscription;
+    private CompositeDisposable mCompositeDisposable;
 
     public BasePresenter() {
         if (initModel() != null) {
@@ -46,16 +48,17 @@ public abstract class BasePresenter<V extends BaseView, M extends BaseModel> {
         return mViewRef != null && mViewRef.get() != null;
     }
 
-    protected void addSubscribe(Subscription subscription) {
-        if (mSubscription == null) {
-            mSubscription = new CompositeSubscription();
+    protected void addSubscribe(Disposable disposable) {
+        if (mCompositeDisposable == null) {
+            mCompositeDisposable = new CompositeDisposable();
         }
-        mSubscription.add(subscription);
+        mCompositeDisposable.add(disposable);
     }
 
     protected void unSubscribe() {
-        if (mSubscription != null && mSubscription.hasSubscriptions()) {
-            mSubscription.clear();
+        if (mCompositeDisposable != null) {
+            mCompositeDisposable.dispose();
+            mCompositeDisposable = null;
         }
     }
 }

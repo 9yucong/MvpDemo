@@ -14,10 +14,9 @@ public interface MainContract {
     }
 
     interface Model extends BaseModel {
-
     }
 
-    abstract class Presenter extends BasePresenter {
-
+    abstract class Presenter extends BasePresenter<View, Model> {
+        public abstract void getPosts();
     }
 }
