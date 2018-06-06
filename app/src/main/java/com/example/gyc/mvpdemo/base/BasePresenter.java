@@ -11,8 +11,8 @@ import rx.subscriptions.CompositeSubscription;
  */
 
 public abstract class BasePresenter<V extends BaseView, M extends BaseModel> {
-    protected Reference<V> mViewRef;
-    protected M mModel;
+    private Reference<V> mViewRef;
+    private M mModel;
     private CompositeSubscription mSubscription;
 
     public BasePresenter() {
@@ -36,6 +36,10 @@ public abstract class BasePresenter<V extends BaseView, M extends BaseModel> {
 
     protected V getView() {
         return mViewRef.get();
+    }
+
+    protected M getModel() {
+        return mModel;
     }
 
     public boolean isViewAttach() {

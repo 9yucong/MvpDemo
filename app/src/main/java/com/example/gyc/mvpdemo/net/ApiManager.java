@@ -13,22 +13,17 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * 网络访问管理类
  */
 
 public class ApiManager {
-    public static final String BASE_URL = "https://github.com";
+    private static final String BASE_URL = "https://github.com";
     private static ApiManager instance;
-    private PersistentCookieJar mCookieJar;
-    private Retrofit mApiRetrofit;
 
     private ApiManager(Context context) {
-        mCookieJar = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(context.getApplicationContext()));
+        PersistentCookieJar cookieJar = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(context.getApplicationContext()));
         // init okhttp 3 logger
         HttpLoggingInterceptor logInterceptor = new HttpLoggingInterceptor();
         logInterceptor.setLevel(HttpLoggingInterceptor.Level.NONE);
@@ -41,17 +36,17 @@ public class ApiManager {
                 .readTimeout(45, TimeUnit.SECONDS)
                 .writeTimeout(55, TimeUnit.SECONDS)
                 .addInterceptor(logInterceptor)
-                .cookieJar(mCookieJar)
+                .cookieJar(cookieJar)
                 .cache(cache)
                 .build();
-        mApiRetrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .build();
+        ApiClient.create(BASE_URL, client);
     }
 
+    /**
+     * 初始化网络访问管理类
+     *
+     * @param context 上下文
+     */
     public static void init(Context context) {
         if (instance == null) {
             synchronized (DBManager.class) {
@@ -62,15 +57,13 @@ public class ApiManager {
         }
     }
 
-    public static ApiManager getInstance() {
-        if (instance == null) {
-            throw new RuntimeException("please init ApiManager first");
-        }
-        return instance;
-    }
-
-    public Retrofit getRetrofit() {
-        return mApiRetrofit;
+    /**
+     * 根据retrofit获取ApiService
+     *
+     * @return
+     */
+    public static ApiService get() {
+        return ApiClient.get(BASE_URL).create(ApiService.class);
     }
 
 }

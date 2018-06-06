@@ -1,5 +1,7 @@
 package com.example.gyc.mvpdemo.base;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -8,12 +10,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.lang.ref.WeakReference;
+
 /**
  * Created by gaoyucong on 2018-06-04.
  */
 
 public abstract class BaseFragement<V extends BaseView, M extends BaseModel, P extends BasePresenter<V, M>> extends Fragment {
     protected P mPresenter;
+    private WeakReference<Activity> mActivityRef;
 
     @Nullable
     @Override
@@ -22,6 +27,21 @@ public abstract class BaseFragement<V extends BaseView, M extends BaseModel, P e
         initView(view, savedInstanceState);
         initEvent();
         return view;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mActivityRef = new WeakReference<Activity>((Activity) context);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        if (mActivityRef != null) {
+            mActivityRef.clear();
+            mActivityRef = null;
+        }
     }
 
     @Override

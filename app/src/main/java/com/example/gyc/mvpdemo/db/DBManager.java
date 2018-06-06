@@ -15,7 +15,7 @@ public class DBManager {
     private Context mContext;
     private DaoMaster mDaoMaster;
     private static DaoSession mDaoSession;
-
+    private static volatile DBManager instance = null;
 
     private DBManager(Context context) {
         mContext = context;
@@ -23,8 +23,6 @@ public class DBManager {
         mDaoMaster = new DaoMaster(helper.getWritableDb());
         mDaoSession = mDaoMaster.newSession();
     }
-
-    private static volatile DBManager instance = null;
 
 
     public static void init(Context context) {
