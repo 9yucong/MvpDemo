@@ -3,6 +3,7 @@ package com.example.gyc.mvpdemo.net;
 import android.content.Context;
 
 import com.example.gyc.mvpdemo.db.DBManager;
+import com.example.gyc.mvpdemo.utils.Constant;
 import com.franmontiel.persistentcookiejar.PersistentCookieJar;
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
@@ -19,10 +20,12 @@ import okhttp3.logging.HttpLoggingInterceptor;
  */
 
 public class ApiManager {
-    private static final String BASE_URL = "http://cwbeta.risinfo.cn/wp-json/";
     private static ApiManager instance;
+    private static String defaultUrl = "";
+    private static OkHttpClient okHttpClient;
 
-    private ApiManager(Context context) {
+    private ApiManager(Context context, String defaultUrl) {
+        this.defaultUrl = defaultUrl;
         PersistentCookieJar cookieJar = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(context.getApplicationContext()));
         // init okhttp 3 logger
         HttpLoggingInterceptor logInterceptor = new HttpLoggingInterceptor();
@@ -30,7 +33,7 @@ public class ApiManager {
         // init cache
         File cacheFile = new File(context.getApplicationContext().getCacheDir(), "cache");
         Cache cache = new Cache(cacheFile, 1024 * 1024 * 100); //100Mb
-        OkHttpClient client = new OkHttpClient.Builder()
+        okHttpClient = new OkHttpClient.Builder()
                 .retryOnConnectionFailure(true)
                 .connectTimeout(15, TimeUnit.SECONDS)
                 .readTimeout(45, TimeUnit.SECONDS)
@@ -39,7 +42,15 @@ public class ApiManager {
                 .cookieJar(cookieJar)
                 .cache(cache)
                 .build();
-        ApiClient.create(BASE_URL, client);
+        ApiClient.create(defaultUrl, okHttpClient);
+    }
+
+    /**
+     * 根据网络访问路径新增Apiservice
+     * @param newUrl url地址
+     */
+    public static void addUrl(String newUrl){
+        ApiClient.create(newUrl, okHttpClient);
     }
 
     /**
@@ -47,23 +58,23 @@ public class ApiManager {
      *
      * @param context 上下文
      */
-    public static void init(Context context) {
+    public static void init(Context context, String defaultUrl) {
         if (instance == null) {
             synchronized (DBManager.class) {
                 if (instance == null) {
-                    instance = new ApiManager(context);
+                    instance = new ApiManager(context, defaultUrl);
                 }
             }
         }
     }
 
     /**
-     * 根据retrofit获取ApiService
+     * 根据url地址获取ApiService
      *
      * @return
      */
     public static ApiService get() {
-        return ApiClient.get(BASE_URL).create(ApiService.class);
+        return ApiClient.get(defaultUrl).create(ApiService.class);
     }
 
 }
